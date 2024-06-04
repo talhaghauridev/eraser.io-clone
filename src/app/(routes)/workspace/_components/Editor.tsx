@@ -116,7 +116,7 @@ function Editor({ onSaveTrigger, fileId, fileData }: EditorProps) {
       <div
         id="editorjs"
         className={cn(
-          currentTab === "document" ? "ml-0" : "ml-[60px] mr-[20px]",
+          currentTab === "document" ? "ml-0" : "ml-[20px] mr-[20px]",
           " selection:text-black selection:bg-neutral-400 "
         )}
       ></div>
