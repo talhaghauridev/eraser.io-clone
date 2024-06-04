@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, { createContext, useContext, useMemo } from "react";
 
 type WorkSpaceContextType = {
   currentTab: string;
@@ -18,7 +18,7 @@ export const WorkSpaceProvider = ({
 }: WorkSpaceProviderProps) => {
   const contextValue = useMemo(
     () => ({ currentTab, setCurrentTab }),
-    [currentTab]
+    [currentTab, setCurrentTab]
   );
   return (
     <WorkSpaceContext.Provider value={contextValue}>

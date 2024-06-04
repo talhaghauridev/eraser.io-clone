@@ -1,7 +1,7 @@
-import { Files, Nullable, Team, User } from "@/types";
+import { Files, Team, User } from "@/types";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { ConvexReactClient, useConvex } from "convex/react";
-import { createContext, useMemo, useState, ReactNode, useContext } from "react";
+import { ReactNode, createContext, useContext, useMemo, useState } from "react";
 
 type FileContextType = {
   fileList: Files[] | null;

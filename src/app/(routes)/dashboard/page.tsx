@@ -35,7 +35,7 @@ const Dashboard = () => {
     if (user) {
       checkUser();
     }
-  }, [user]);
+  }, [user,checkUser]);
 
   return (
     <div className="p-[32px]">

@@ -1,11 +1,11 @@
 'use client';
-import React, { memo, useCallback, useEffect } from "react";
-import { useMutation } from "convex/react";
-import { api } from "@convex/_generated/api";
-import { toast } from "sonner";
-import SideNavTopSection from "./SideNavTopSection";
-import SideNavBottomSection from "./SideNavBottomSection";
 import { useFileContext } from "@/context/FilexContext";
+import { api } from "@convex/_generated/api";
+import { useMutation } from "convex/react";
+import { memo, useCallback, useEffect } from "react";
+import { toast } from "sonner";
+import SideNavBottomSection from "./SideNavBottomSection";
+import SideNavTopSection from "./SideNavTopSection";
 
 const SideNav = () => {
   const { convex, user, setTotalFiles, setFileLoading, activeTeam, setFileList } = useFileContext();

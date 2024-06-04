@@ -1,6 +1,6 @@
 'use client'
 import { LoginLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs'
-import React, { memo } from 'react'
+import { memo } from 'react'
 
 const AuthButtons = () => {
   return (

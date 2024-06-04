@@ -1,10 +1,9 @@
 "use client";
-import React, { memo, useCallback, useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import { EditorProps } from "./Editor";
+import { api } from "@convex/_generated/api";
 import { MainMenu, WelcomeScreen } from "@excalidraw/excalidraw";
 import { useMutation } from "convex/react";
-import { api } from "@convex/_generated/api";
+import dynamic from "next/dynamic";
+import React, { memo, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 const Excalidraw = dynamic(
   async () => (await import("@excalidraw/excalidraw")).Excalidraw,
@@ -13,8 +12,21 @@ const Excalidraw = dynamic(
   }
 );
 
-const Canvas = ({ fileData, fileId, onSaveTrigger }: EditorProps) => {
-  const [whiteBoardData, setWhiteBoardData] = useState();
+type CanvasProps = {
+  onSaveTrigger: boolean;
+  fileId: string;
+  fileData: any;
+  setWhiteBoardData: React.Dispatch<React.SetStateAction<any>>;
+  whiteBoardData: any;
+};
+
+const Canvas = ({
+  fileData,
+  fileId,
+  onSaveTrigger,
+  setWhiteBoardData,
+  whiteBoardData,
+}: CanvasProps) => {
   const updateWhiteBoard = useMutation(api.files.updateWhiteBoard);
 
   const saveWhiteBoard = useCallback(async () => {
@@ -26,26 +38,24 @@ const Canvas = ({ fileData, fileId, onSaveTrigger }: EditorProps) => {
     } catch (error) {
       toast.error("Something went wrong");
     }
-  }, [toast, fileId, whiteBoardData]);
+  }, [fileId, whiteBoardData,updateWhiteBoard]);
 
   useEffect(() => {
     if (onSaveTrigger) {
       saveWhiteBoard();
     }
-  }, [onSaveTrigger]);
+  }, [onSaveTrigger, saveWhiteBoard]);
 
   return (
     <div style={{ height: "540px" }}>
       {fileData && (
         <Excalidraw
           theme="light"
-          onChange={(excalidrawElements, appState, files) =>
-            setWhiteBoardData(excalidrawElements as any)
+          onChange={(excalidrawElements) =>
+            setWhiteBoardData(excalidrawElements)
           }
           initialData={{
-            elements: fileData?.whiteboard
-              ? JSON.parse(fileData.whiteboard)
-              : "",
+            elements: whiteBoardData,
           }}
           UIOptions={{
             canvasActions: {

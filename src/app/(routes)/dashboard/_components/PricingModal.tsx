@@ -1,4 +1,3 @@
-import React, { memo } from "react";
 import {
   DialogClose,
   DialogContent,
@@ -8,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Link from "next/link";
+import { memo } from "react";
 function PricingModal() {
   return (
     <DialogContent className="max-w-4xl">

@@ -1,20 +1,20 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
-import { useConvex } from "convex/react";
-import { api } from "@convex/_generated/api";
-import { toast } from "sonner";
-import dynamic from "next/dynamic";
-import { WorkSpaceProvider } from "@/context/WorkSpaceContext";
-import Loading from "../_components/Loading";
-import { Files } from "@/types";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import { useSearchParams } from "next/navigation";
-import WorkSpaceHeader from "../_components/WorkSpaceHeader";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { WorkSpaceProvider } from "@/context/WorkSpaceContext";
+import { Files } from "@/types";
+import { api } from "@convex/_generated/api";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { useConvex } from "convex/react";
+import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import Loading from "../_components/Loading";
+import WorkSpaceHeader from "../_components/WorkSpaceHeader";
 
 const Canvas = dynamic(() => import("../_components/Canvas"), {
   ssr: false,
@@ -37,6 +37,8 @@ const Page = ({ params }: Params) => {
   const [triggerSave, setTriggerSave] = useState<boolean>(false);
   const [fileData, setFileData] = useState<Files>();
   const [fetchAgain, setFetchAgain] = useState(false);
+  const [whiteBoardData, setWhiteBoardData] = useState<any[]>([]);
+  const [document, setDocument] = useState<any>();
   const [currentTab, setCurrentTab] = useState<string>("both");
   const { user } = useKindeBrowserClient();
   const convex = useConvex();
@@ -44,40 +46,46 @@ const Page = ({ params }: Params) => {
   //Create a copy url
   const createPublicUrl = () => {
     if (typeof window !== "undefined") {
-      const publicUrl = `${window.location.origin}/workspace/${params.fileId}?orgin=public`;
-      return publicUrl;
+      return `${window.location.origin}/workspace/${params.fileId}?orgin=public`;
     }
   };
 
   //Get Files
   const getFileData = useCallback(async () => {
     try {
+      let result;
       if (user && orgin === "public") {
-        const result = await convex.query(api.files.getPublicFileById, {
+        result = await convex.query(api.files.getPublicFileById, {
           _id: params.fileId as any,
           public_url: createPublicUrl()!,
         });
-
-        setFileData(result);
-        return;
+      } else {
+        result = await convex.query(api.files.getFileById, {
+          _id: params.fileId as any,
+          createdBy: user?.email as string,
+        });
       }
 
-      const result = await convex.query(api.files.getFileById, {
-        _id: params.fileId as any,
-        createdBy: user?.email as string,
-      });
-
       setFileData(result);
+
+      if (result && result.whiteboard) {
+        setWhiteBoardData(JSON.parse(result.whiteboard));
+      }
+
+      if (result && result.document) {
+        setDocument(JSON.parse(result.document));
+      }
     } catch (error) {
       toast.error("Error fetching file data");
     }
-  }, [toast, params.fileId, convex, user, orgin, fetchAgain]);
+  }, [params.fileId, convex, user, orgin,createPublicUrl]);
 
   useEffect(() => {
     if (params.fileId && user && user.email) {
       getFileData();
     }
-  }, [params.fileId, getFileData, user, fetchAgain]);
+  }, [params.fileId, getFileData, user]);
+
   return (
     <>
       <WorkSpaceProvider currentTab={currentTab} setCurrentTab={setCurrentTab}>
@@ -88,14 +96,14 @@ const Page = ({ params }: Params) => {
             public_url={createPublicUrl()!}
             fileName={fileData?.fileName!}
             fileData={fileData!}
-            onSave={() => setTriggerSave((pve) => !pve)}
+            onSave={() => setTriggerSave((prev) => !prev)}
           />
 
           {/* Workspace Layout  */}
           {currentTab === "both" && (
             <div className="">
               <ResizablePanelGroup
-                className=" flex-[coloum!important] md:flex-[row!important] flex w-full h-full"
+                className="!grid  md:!flex md:flex-row w-full h-full"
                 direction="horizontal"
               >
                 <ResizablePanel
@@ -103,8 +111,10 @@ const Page = ({ params }: Params) => {
                   minSize={35}
                   collapsible={false}
                 >
-                  <div className="w-full h-[90vh]">
+                  <div className="w-full h-[90vh] md:border-0 border-b border-solid border-[#00000026]">
                     <Editor
+                      document={document}
+                      setDocument={setDocument}
                       onSaveTrigger={triggerSave}
                       fileId={params.fileId}
                       fileData={fileData}
@@ -118,6 +128,8 @@ const Page = ({ params }: Params) => {
                       onSaveTrigger={triggerSave}
                       fileId={params.fileId}
                       fileData={fileData!}
+                      setWhiteBoardData={setWhiteBoardData}
+                      whiteBoardData={whiteBoardData}
                     />
                   </div>
                 </ResizablePanel>
@@ -128,6 +140,8 @@ const Page = ({ params }: Params) => {
           {currentTab === "document" && (
             <div className="h-[90vh]">
               <Editor
+                document={document}
+                setDocument={setDocument}
                 onSaveTrigger={triggerSave}
                 fileId={params.fileId}
                 fileData={fileData}
@@ -140,6 +154,8 @@ const Page = ({ params }: Params) => {
                 onSaveTrigger={triggerSave}
                 fileId={params.fileId}
                 fileData={fileData!}
+                setWhiteBoardData={setWhiteBoardData}
+                whiteBoardData={whiteBoardData}
               />
             </div>
           )}

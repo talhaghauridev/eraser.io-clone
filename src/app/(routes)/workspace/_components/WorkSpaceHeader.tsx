@@ -1,33 +1,30 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Logo2 } from "@public/Images";
-import {
-  Save,
-  Link as LinkIcon,
-  MoreHorizontal,
-  Archive,
-  LayoutDashboard,
-  LayoutDashboardIcon,
-} from "lucide-react";
-import Image from "next/image";
-import React, { Suspense, memo, useCallback, useState, useEffect } from "react";
-import Tabs from "./Tabs";
-import Link from "next/link";
-import { useMutation } from "convex/react";
-import { api } from "@convex/_generated/api";
-import { toast } from "sonner";
-import { copyToClipboard } from "@/lib/utils";
-import { Files } from "@/types";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+import { copyToClipboard } from "@/lib/utils";
+import { Files } from "@/types";
+import { api } from "@convex/_generated/api";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { Logo2 } from "@public/Images";
+import { useMutation } from "convex/react";
+import {
+  Archive,
+  LayoutDashboardIcon,
+  Link as LinkIcon,
+  MoreHorizontal,
+  Save,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import React, { memo, useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import Tabs from "./Tabs";
 
 type WorkspaceHeaderProps = {
   onSave: () => void;
@@ -70,7 +67,7 @@ function WorkspaceHeader({
     } catch (error) {
       toast.error("Error creating public file");
     }
-  }, [public_url, fileId, toast, fileData]);
+  }, [public_url, fileId, toast, fileData, createPublicFile, setFetchAgain]); // Include createPublicFile and setFetchAgain in the dependency array
 
   useEffect(() => {
     if (fileData && user) {
@@ -82,20 +79,20 @@ function WorkspaceHeader({
     <div className="p-3 border-b flex justify-between items-center">
       <div className="flex gap-2 items-center">
         <Link href="/dashboard">
-          <Image src={Logo2} alt="logo" height={40} width={40} />
+          <Image src={Logo2.src} alt="logo" height={40} width={40} />
         </Link>
         <h2>{fileData ? fileName : "Untiled"}</h2>
         <div className="flex items-center justify-center">
           <DropdownMenu>
-            <DropdownMenuTrigger >
+            <DropdownMenuTrigger>
               <MoreHorizontal size={16} />
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="ml-8" >
+            <DropdownMenuContent className="ml-8">
               <DropdownMenuItem>
                 <Archive size={16} className="mr-2" />
                 Move to Archive
               </DropdownMenuItem>
-              <DropdownMenuItem >
+              <DropdownMenuItem>
                 <Link className="flex items-center text-xs" href="/dashboard">
                   <LayoutDashboardIcon size={16} className="mr-2" />
                   Go To Dashboard

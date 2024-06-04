@@ -1,7 +1,7 @@
 "use client";
-import React, { memo } from "react";
-import { Button } from "./ui/button";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
+import { memo } from "react";
+import { Button } from "./ui/button";
 
 const LogoutButton = () => {
   return (

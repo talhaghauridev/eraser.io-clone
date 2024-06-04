@@ -1,11 +1,11 @@
 "use client";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import React, { useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useConvex } from "convex/react";
-import { api } from "@convex/_generated/api";
-import SideNav from "./_components/SideNav";
 import { FileProvider } from "@/context/FilexContext";
+import { api } from "@convex/_generated/api";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { useConvex } from "convex/react";
+import { useRouter } from "next/navigation";
+import React, { useCallback, useEffect } from "react";
+import SideNav from "./_components/SideNav";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const convex = useConvex();
@@ -24,7 +24,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     if (user) {
       checkTeam();
     }
-  }, [user]);
+  }, [user,checkTeam]);
   return (
     <section>
       <FileProvider>

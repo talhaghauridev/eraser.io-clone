@@ -1,7 +1,6 @@
-import React from "react";
-import Image from "next/image";
-import { Logo1 } from "@public/Images";
 import { FOOTER_LINKS } from "@/constants";
+import { Logo1 } from "@public/Images";
+import Image from "next/image";
 const Footer = () => {
   return (
     <footer className="bg-[#161616]">

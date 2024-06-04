@@ -1,8 +1,8 @@
 "use client";
-import React, { memo } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useWorkSpaceContext } from "@/context/WorkSpaceContext";
 import { WORKSPACE_TABS } from "@/constants";
+import { useWorkSpaceContext } from "@/context/WorkSpaceContext";
+import { memo } from "react";
 
 const HeaderTabs = () => {
   const { setCurrentTab } = useWorkSpaceContext();

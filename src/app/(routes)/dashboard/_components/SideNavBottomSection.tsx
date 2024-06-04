@@ -1,8 +1,8 @@
 'use client'
-import React, { memo } from "react";
 import { MAX_FREE_FILE, MENU_BOTTOM } from "@/constants";
-import NewFileModal from "./NewFileModal";
 import { useFileContext } from "@/context/FilexContext";
+import { memo } from "react";
+import NewFileModal from "./NewFileModal";
 
 export type SideNavBottomSectionProps = {
   onFileCreate: (fileName: string) => void;

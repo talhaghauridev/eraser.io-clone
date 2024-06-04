@@ -1,11 +1,11 @@
-import Image from "next/image";
-import React, { Suspense } from "react";
 import { NAV_LINKS } from "@/constants";
-import AuthButtons from "./AuthButtons";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Logo1 } from "@public/Images";
-import { buttonVariants } from "./ui/button";
+import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
+import AuthButtons from "./AuthButtons";
+import { buttonVariants } from "./ui/button";
 
 async function Header() {
   const { isAuthenticated } = getKindeServerSession();

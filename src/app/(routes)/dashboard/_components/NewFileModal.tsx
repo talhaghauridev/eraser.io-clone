@@ -1,5 +1,5 @@
 "use client";
-import React, { memo, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,12 +9,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { SideNavBottomSectionProps } from "./SideNavBottomSection";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MAX_FREE_FILE } from "@/constants";
+import { DialogClose } from "@radix-ui/react-dialog";
+import { memo, useState } from "react";
 import PricingModal from "./PricingModal";
+import { SideNavBottomSectionProps } from "./SideNavBottomSection";
 
 type NewFileModalProps = Pick<SideNavBottomSectionProps, "onFileCreate"> & {
   totalFiles: number;

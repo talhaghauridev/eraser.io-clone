@@ -1,6 +1,6 @@
 "use client";
-import React, { memo, useCallback, useEffect, useRef } from "react";
 import EditorJS from "@editorjs/editorjs";
+import React, { memo, useCallback, useEffect, useRef } from "react";
 // @ts-ignore
 import Header from "@editorjs/header";
 // @ts-ignore
@@ -11,11 +11,12 @@ import Paragraph from "@editorjs/paragraph";
 import Warning from "@editorjs/warning";
 // @ts-ignore
 import Checklist from "@editorjs/checklist";
-import { useMutation } from "convex/react";
-import { api } from "@convex/_generated/api";
-import { toast } from "sonner";
 import { useWorkSpaceContext } from "@/context/WorkSpaceContext";
 import { cn } from "@/lib/utils";
+import { api } from "@convex/_generated/api";
+import { useMutation } from "convex/react";
+import { toast } from "sonner";
+
 const rawDocument = {
   time: 1550476186479,
   blocks: [
@@ -42,13 +43,22 @@ export type EditorProps = {
   onSaveTrigger: boolean;
   fileId: string;
   fileData: any;
+  document: any;
+  setDocument: React.Dispatch<React.SetStateAction<any>>;
 };
-function Editor({ onSaveTrigger, fileId, fileData }: EditorProps) {
-  const ref = useRef<EditorJS>();
+
+function Editor({
+  onSaveTrigger,
+  fileId,
+  fileData,
+  document,
+  setDocument,
+}: EditorProps) {
+  const ref = useRef<EditorJS | null>(null);
   const { currentTab } = useWorkSpaceContext();
   const updateDocument = useMutation(api.files.updateDocument);
 
-  //Intila Editor
+  // Initialize Editor
   const initEditor = useCallback(() => {
     const editor = new EditorJS({
       tools: {
@@ -73,12 +83,21 @@ function Editor({ onSaveTrigger, fileId, fileData }: EditorProps) {
         paragraph: Paragraph,
         warning: Warning,
       },
-
       holder: "editorjs",
-      data: fileData?.document ? JSON.parse(fileData.document) : rawDocument,
+      data: document ? document : rawDocument,
+
+      onChange: () => {
+        if (ref.current) {
+          ref.current.save().then((outputData) => {
+            setDocument(outputData);
+          });
+        }
+      },
     });
-    ref.current = editor;
-  }, [rawDocument, ref, fileData]);
+    if (!ref.current) {
+      ref.current = editor;
+    }
+  }, [fileData, document, setDocument]); // Include setDocument in the dependency array
 
   const onSaveDocument = useCallback(() => {
     if (ref.current) {
@@ -88,36 +107,36 @@ function Editor({ onSaveTrigger, fileId, fileData }: EditorProps) {
             document: JSON.stringify(outputData),
             _id: fileId as any,
           });
-
           toast("Document Updated!");
         } catch (error) {
           toast.error("Error updating document");
         }
       });
     }
-  }, [ref, toast, fileId]);
+  }, [fileId, updateDocument]);
 
   useEffect(() => {
     if (fileData) {
       initEditor();
     }
-  }, [fileData]);
+  }, [fileData, initEditor]);
 
   useEffect(() => {
     if (onSaveTrigger) {
       onSaveDocument();
     }
-  }, [onSaveTrigger]);
+  }, [onSaveTrigger, onSaveDocument]);
+
   return (
     <div
-      className="overflow-x-hidden overflow-y-auto w-full  h-[85vh] mb-4 "
+      className="overflow-x-hidden overflow-y-auto w-full h-[85vh] mb-4"
       style={{ scrollbarWidth: "none" }}
     >
       <div
         id="editorjs"
         className={cn(
           currentTab === "document" ? "ml-0" : "ml-[20px] mr-[20px]",
-          " selection:text-black selection:bg-neutral-400 "
+          "selection:text-black selection:bg-neutral-400"
         )}
       ></div>
     </div>
