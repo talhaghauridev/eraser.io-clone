@@ -4,7 +4,6 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import ConvexClientProvider from "@/lib/ConvexClientProvider";
 import { Toaster } from "@/components/ui/sonner";
-import { Suspense } from "react";
 
 const fontSans = Inter({
   subsets: ["latin"],

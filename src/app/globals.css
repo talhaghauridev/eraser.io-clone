@@ -20,7 +20,22 @@ h5.ce-header{
 h6.ce-header{
   @apply text-base font-semibold
 }
- 
+
+#hero{
+  position: relative;
+  overflow: hidden;
+}
+
+.column-flex{
+  flex-direction: column !important;
+} 
+
+
+.row-flex{
+  flex-direction: row !important;
+} 
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;

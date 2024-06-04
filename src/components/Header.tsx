@@ -11,7 +11,7 @@ async function Header() {
   const { isAuthenticated } = getKindeServerSession();
 
   return (
-    <header className="bg-black">
+    <header  className="z-10 backdrop-blur-xl w-full fixed">
       <div className="mx-auto flex h-16 max-w-screen-xl items-center gap-8 px-4 sm:px-6 lg:px-8">
         <Image src={Logo1} alt="logo" width={110} height={110} />
 

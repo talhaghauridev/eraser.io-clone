@@ -109,10 +109,16 @@ function Editor({ onSaveTrigger, fileId, fileData }: EditorProps) {
     }
   }, [onSaveTrigger]);
   return (
-    <div>
+    <div
+      className="overflow-x-hidden overflow-y-auto w-full  h-[85vh] mb-4 "
+      style={{ scrollbarWidth: "none" }}
+    >
       <div
         id="editorjs"
-        className={cn(currentTab === "document" ? "ml-0" : "ml-20")}
+        className={cn(
+          currentTab === "document" ? "ml-0" : "ml-[60px] mr-[20px]",
+          " selection:text-black selection:bg-neutral-400 "
+        )}
       ></div>
     </div>
   );

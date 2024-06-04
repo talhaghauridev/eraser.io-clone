@@ -5,12 +5,17 @@ import { api } from "@convex/_generated/api";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import { WorkSpaceProvider } from "@/context/WorkSpaceContext";
-import { cn } from "@/lib/utils";
 import Loading from "../_components/Loading";
 import { Files } from "@/types";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import {  useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import WorkSpaceHeader from "../_components/WorkSpaceHeader";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+
 const Canvas = dynamic(() => import("../_components/Canvas"), {
   ssr: false,
   loading: () => <Loading />,
@@ -36,6 +41,7 @@ const Page = ({ params }: Params) => {
   const { user } = useKindeBrowserClient();
   const convex = useConvex();
 
+  //Create a copy url
   const createPublicUrl = () => {
     if (typeof window !== "undefined") {
       const publicUrl = `${window.location.origin}/workspace/${params.fileId}?orgin=public`;
@@ -43,6 +49,7 @@ const Page = ({ params }: Params) => {
     }
   };
 
+  //Get Files
   const getFileData = useCallback(async () => {
     try {
       if (user && orgin === "public") {
@@ -59,8 +66,6 @@ const Page = ({ params }: Params) => {
         _id: params.fileId as any,
         createdBy: user?.email as string,
       });
-      console.log(result);
-      console.log("Fetch Again", fetchAgain);
 
       setFileData(result);
     } catch (error) {
@@ -73,64 +78,74 @@ const Page = ({ params }: Params) => {
       getFileData();
     }
   }, [params.fileId, getFileData, user, fetchAgain]);
-
-  const checkCurrentTab = (tabName: string) => {
-    if (currentTab === "both" || currentTab === tabName) {
-      return "block opacity-1";
-    } else {
-      return "hidden opacity-0";
-    }
-  };
-
   return (
-    <WorkSpaceProvider currentTab={currentTab} setCurrentTab={setCurrentTab}>
-      <div>
-        <WorkSpaceHeader
-          setFetchAgain={setFetchAgain}
-          fileId={params.fileId}
-          public_url={createPublicUrl()!}
-          fileName={fileData?.fileName!}
-          fileData={fileData!}
-          onSave={() => setTriggerSave((pve) => !pve)}
-        />
+    <>
+      <WorkSpaceProvider currentTab={currentTab} setCurrentTab={setCurrentTab}>
+        <div className="w-full overflow-hidden">
+          <WorkSpaceHeader
+            setFetchAgain={setFetchAgain}
+            fileId={params.fileId}
+            public_url={createPublicUrl()!}
+            fileName={fileData?.fileName!}
+            fileData={fileData!}
+            onSave={() => setTriggerSave((pve) => !pve)}
+          />
 
-        {/* Workspace Layout  */}
-        <div
-          className={cn(
-            "grid grid-cols-1 md:grid-cols-2",
-            currentTab !== "both" && " md:grid-cols-1"
+          {/* Workspace Layout  */}
+          {currentTab === "both" && (
+            <div className="">
+              <ResizablePanelGroup
+                className=" flex-[coloum!important] md:flex-[row!important] flex w-full h-full"
+                direction="horizontal"
+              >
+                <ResizablePanel
+                  defaultSize={50}
+                  minSize={35}
+                  collapsible={false}
+                >
+                  <div className="w-full h-[90vh]">
+                    <Editor
+                      onSaveTrigger={triggerSave}
+                      fileId={params.fileId}
+                      fileData={fileData}
+                    />
+                  </div>
+                </ResizablePanel>
+                <ResizableHandle className=" md:flex hidden bg-[#00000026]" />
+                <ResizablePanel defaultSize={50} minSize={45}>
+                  <div className="h-[90vh]">
+                    <Canvas
+                      onSaveTrigger={triggerSave}
+                      fileId={params.fileId}
+                      fileData={fileData!}
+                    />
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </div>
           )}
-        >
-          {/* Document  */}
-          <div
-            className={cn(
-              "h-[90vh] transition-all",
-              checkCurrentTab("document")
-            )}
-          >
-            <Editor
-              onSaveTrigger={triggerSave}
-              fileId={params.fileId}
-              fileData={fileData}
-            />
-          </div>
-          {/* Whiteboard/canvas  */}
-          <div
-            className={cn(
-              "h-[90vh] transition-all",
-              checkCurrentTab("canvas"),
-              currentTab === "both" && "border-l"
-            )}
-          >
-            <Canvas
-              onSaveTrigger={triggerSave}
-              fileId={params.fileId}
-              fileData={fileData}
-            />
-          </div>
+
+          {currentTab === "document" && (
+            <div className="h-[90vh]">
+              <Editor
+                onSaveTrigger={triggerSave}
+                fileId={params.fileId}
+                fileData={fileData}
+              />
+            </div>
+          )}
+          {currentTab === "canvas" && (
+            <div className="h-[90vh]">
+              <Canvas
+                onSaveTrigger={triggerSave}
+                fileId={params.fileId}
+                fileData={fileData!}
+              />
+            </div>
+          )}
         </div>
-      </div>
-    </WorkSpaceProvider>
+      </WorkSpaceProvider>
+    </>
   );
 };
 

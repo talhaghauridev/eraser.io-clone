@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 
 function Hero() {
   return (
-    <section className="bg-[black] h-[95vh]">
+    <section id="hero" className="relative bg-gradient-to-b from-neutral-900 via-gray-900 to-neutral-900 text-white h-[100vh] flex items-center justify-center flex-col">
       <div className="flex items-baseline  justify-center pt-20 ">
         <h2
           className="text-white border flex items-center justify-center gap-[10px] py-[5px] px-[8px] rounded-full bg-[#253b4d]
